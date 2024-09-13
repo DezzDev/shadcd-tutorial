@@ -29,25 +29,12 @@ const myCustomFilterFn: FilterFn<Payment> = (
 		
 		filterValue = filterValue.toLowerCase()
 		const filterParts = filterValue.split(" ")
-
-		filterParts.forEach(part => {
-
-		})
 		
-		if(row.original.email.includes(filterValue)){
-			return true
-		}
+		const rowValues = `${row.original.email} ${row.original.clientName} 
+			${row.original.status}`.toLocaleLowerCase()
+		console.log(rowValues)
+		return filterParts.every((part)=> rowValues.includes(part))
 		
-		if(row.original.clientName.includes(filterValue)){
-			return true
-		}
-		
-		if(row.original.status.includes(filterValue)){
-			return true
-		}
-		
-
-		return false
 }
 
 

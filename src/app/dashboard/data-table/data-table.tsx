@@ -91,13 +91,14 @@ export function DataTable<TData, TValue>({
 			<div className="flex items-center justify-between py-4 gap-2">
 				<Input
 					placeholder="Filter... (client name, email, status)"
+
 					value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
 					onChange={(event) => {
+						
 						setCurrentStatus("all")
 						table.getColumn("status")?.setFilterValue(undefined)
 						table.getColumn("email")?.setFilterValue(event.target.value)
-					}
-					}
+					}}
 					className="max-w-sm"
 				/>
 
