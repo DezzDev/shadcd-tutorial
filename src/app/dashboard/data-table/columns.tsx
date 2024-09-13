@@ -1,6 +1,6 @@
 "use client"
 
-import { ColumnDef, SortDirection } from "@tanstack/react-table"
+import { ColumnDef, FilterFn, Row, SortDirection } from "@tanstack/react-table"
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 import type { Payment } from "@/data/payments.data"
@@ -21,10 +21,35 @@ import {
 import { toast } from "sonner"
 
 
-type badgeVariant = {
-	variant: "secondary" | "default" | "success" | "destructive"
-	| "outline" | "info" | null | undefined
+const myCustomFilterFn: FilterFn<Payment> = (
+	row: Row<Payment>, 
+	columnId: string, 
+	filterValue: string, 
+	addMeta: (meta: any) => void) => {
+		
+		filterValue = filterValue.toLowerCase()
+		const filterParts = filterValue.split(" ")
+
+		filterParts.forEach(part => {
+
+		})
+		
+		if(row.original.email.includes(filterValue)){
+			return true
+		}
+		
+		if(row.original.clientName.includes(filterValue)){
+			return true
+		}
+		
+		if(row.original.status.includes(filterValue)){
+			return true
+		}
+		
+
+		return false
 }
+
 
 const SortedIcon = ({ isSorted }: { isSorted: SortDirection | boolean }) => {
 	if (isSorted === "asc") {
@@ -138,6 +163,7 @@ export const columns: ColumnDef<Payment>[] = [
 	},
 	{
 		accessorKey: "email",
+		filterFn: myCustomFilterFn,
 		header: ({ column }) => {
 			return (
 				<Button
