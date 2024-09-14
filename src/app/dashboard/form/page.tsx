@@ -26,6 +26,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover"
+import { Switch } from "@/components/ui/switch"
 
 
 const formSchema = z.object({
@@ -37,7 +38,15 @@ const formSchema = z.object({
 	dob: z.date({
 		required_error: "A date of birth is required.",
 	}),
-})
+	marketing_emails: z.boolean().default(false),
+	security_emails: z.boolean(),
+}).refine((data)=>
+	// obligamos a que tenga que aceptar
+	data.marketing_emails === true, {
+		message: "You must agree to receive marketing emails",
+		path: ["marketing_emails"]
+	}
+)
 
 export default function Page() {
 	// 1. Define your form.
@@ -45,7 +54,8 @@ export default function Page() {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			username: "",
-			email: ""
+			email: "",
+			security_emails: true,
 		},
 	})
 
@@ -53,7 +63,7 @@ export default function Page() {
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		// Do something with the form values.
 		// ✅ This will be type-safe and validated.
-		
+
 		toast({
 			title: "You submitted the following values:",
 			description: (
@@ -64,10 +74,12 @@ export default function Page() {
 		})
 	}
 
+	console.log(form)
+
 	return (
-		<div className="flex flex-col gap-y-10">
+		<div>
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
+				<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 					{/* username */}
 					<FormField
 						control={form.control}
@@ -143,7 +155,7 @@ export default function Page() {
 						)}
 					/>
 
-					{/* datepicker */}
+					{/* date picker */}
 
 					<FormField
 						control={form.control}
@@ -189,12 +201,66 @@ export default function Page() {
 							</FormItem>
 						)}
 					/>
+
+					{/* switch */}
+
+					<div>
+						<h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
+						<div className="space-y-4">
+							<FormField
+								control={form.control}
+								name="marketing_emails"
+								render={({ field }) => (
+									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+										<div className="space-y-0.5">
+											<FormLabel className="text-base">
+												Marketing emails
+											</FormLabel>
+											<FormDescription>
+												Receive emails about new products, features, and more.
+											</FormDescription>
+											<FormMessage />
+										</div>
+										<FormControl>
+											<Switch
+												checked={field.value}
+												onCheckedChange={field.onChange}
+											/>
+										</FormControl>
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="security_emails"
+								render={({ field }) => (
+									<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+										<div className="space-y-0.5">
+											<FormLabel className="text-base">Security emails</FormLabel>
+											<FormDescription>
+												Receive emails about your account security.
+											</FormDescription>
+										</div>
+										<FormControl>
+											<Switch
+												checked={field.value}
+												onCheckedChange={field.onChange}
+												disabled
+												aria-readonly
+											/>
+										</FormControl>
+									</FormItem>
+								)}
+							/>
+						</div>
+					</div>
+
 					{/* submit */}
-					<Button type="submit">Submit</Button>
+					<Button className="sm:col-span-2" type="submit">Submit</Button>
 				</form>
 			</Form>
 
-		
+
 		</div>
 	)
 }
